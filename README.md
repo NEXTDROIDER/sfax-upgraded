@@ -38,16 +38,16 @@ Example `manifest.json`:
 
 The package's `install.sh` receives the extracted `data/` path as its first argument (or a path to an empty/nonexistent data directory if there is no payload). Keep installation paths inside `$PREFIX`; do not assume root access or use `apt`/`dpkg`. Install Termux dependencies with `pkg install` in `preinstall.sh` when needed.
 
-Build the archive (the script is named `build`):
+Build the archive with `build_sfx`:
 
 ```sh
-bash build/apps/build ./my-app
+bash build/apps/build_sfx ./my-app
 ```
 
 The resulting archive is written to `my-app/dist/hello-termux-1.0.0-termux.sfx`. To choose another output directory:
 
 ```sh
-bash build/apps/build ./my-app ./dist
+bash build/apps/build_sfx ./my-app ./dist
 ```
 
 ## Install a package
@@ -71,3 +71,7 @@ Hooks are shell scripts, run with `bash`, and receive the package data directory
 ## Java package manager
 
 The standalone package manager source, build instructions, and Termux CLI installer are in [`sfax/`](sfax/README.md). It supports repository listing, search, package details, dependency resolution, and `.sfx` installs.
+
+## Package repository
+
+Store ARM64 packages in [`repo/arm64/`](repo/arm64/) and publish them with `bash repo/publish.sh ./package.sfx`. The publisher adds the archive and its SHA-256 entry to the repository index. GitHub Pages deployment and setup are described in [`repo/README.md`](repo/README.md).
