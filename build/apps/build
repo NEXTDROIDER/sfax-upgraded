@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+    cat <<'EOF'
+Usage: build_sfx APP_DIR [OUTPUT_DIR]
+
+APP_DIR must contain manifest.json and install.sh. Optional files:
+  preinstall.sh   dependency/setup hook, run before install.sh
+  postinstall.sh  completion hook, run after install.sh
+  data/           files copied with the package
+
+The output is a ZIP-compatible .sfx archive for Termux.
+EOF
+}
+
+if [[ $# -lt 1 || $# -gt 2 ]]; then
+    usage >&2
+    exit 2
+fi
+
+app_dir=$(cd "$1" && pwd)
+output_dir=${2:-"$app_dir/dist"}
+mkdir -p "$output_dir"
+output_dir=$(cd "$output_dir" && pwd)
+
+for file in manifest.json install.sh; do
+    if [[ ! -f "$app_dir/$file" ]]; then
+        printf 'Error: required file not found: %s\n' "$app_dir/$file" >&2
+        exit 1
+    fi
+done
+
+if ! command -v zip >/dev/null 2>&1; then
+    printf 'Error: zip is required. On Termux run: pkg install zip\n' >&2
+    exit 1
+fi
+
+app_name=$(sed -n 's/.*"name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$app_dir/manifest.json" | head -n 1)
+app_version=$(sed -n 's/.*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$app_dir/manifest.json" | head -n 1)
+if [[ -z "$app_name" || -z "$app_version" ]]; then
+    printf 'Error: manifest.json must define non-empty name and version fields.\n' >&2
+    exit 1
+fi
+
+archive="$output_dir/${app_name}-${app_version}-termux.sfx"
+stage=$(mktemp -d)
+trap 'rm -rf "$stage"' EXIT
+
+cp "$app_dir/manifest.json" "$app_dir/install.sh" "$stage/"
+for hook in preinstall.sh postinstall.sh; do
+    [[ ! -f "$app_dir/$hook" ]] || cp "$app_dir/$hook" "$stage/"
+done
+[[ ! -d "$app_dir/data" ]] || cp -R "$app_dir/data" "$stage/"
+chmod +x "$stage"/*.sh
+
+rm -f "$archive"
+(cd "$stage" && zip -qr "$archive" .)
+printf 'Built %s\n' "$archive"
