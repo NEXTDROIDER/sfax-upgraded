@@ -1,5 +1,14 @@
 [
   {
+    "name": "sfax-build-sfx",
+    "version": "1.0.0",
+    "architecture": "all",
+    "dependencies": [],
+    "description": "Installs the sfax .sfx package builder for Termux",
+    "url": "sfax-build-sfx-1.0.0-termux.sfx",
+    "sha256": "301c0c75f49e8c1befb80aa67ea5fa3d28db7ed49c1398066478fcefd4fdab97"
+  },
+  {
     "name": "zgames-pkg",
     "version": "1.0.0",
     "architecture": "all",
@@ -9,4 +18,3 @@
     "sha256": "779efc4efc609f7e8a4f0b07d5216e014e5b6c2f760bf8ea666e34d7aefa2056"
   }
 ]
-
