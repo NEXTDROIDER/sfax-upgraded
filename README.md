@@ -38,16 +38,21 @@ Example `manifest.json`:
 
 The package's `install.sh` receives the extracted `data/` path as its first argument (or a path to an empty/nonexistent data directory if there is no payload). Keep installation paths inside `$PREFIX`; do not assume root access or use `apt`/`dpkg`. Install Termux dependencies with `pkg install` in `preinstall.sh` when needed.
 
+Install the `build_sfx`:
+```sh
+sfax install sfax-build-sfx
+```
+
 Build the archive with `build_sfx`:
 
 ```sh
-bash build/apps/build_sfx ./my-app
+build_sfx ./my-app
 ```
 
 The resulting archive is written to `my-app/dist/hello-termux-1.0.0-termux.sfx`. To choose another output directory:
 
 ```sh
-bash build/apps/build_sfx ./my-app ./dist
+build_sfx ./my-app ./output
 ```
 
 ## Install a package
@@ -55,7 +60,7 @@ bash build/apps/build_sfx ./my-app ./dist
 Run the installer from Termux with a local archive:
 
 ```sh
-bash repo/install.sh ./hello-termux-1.0.0-termux.sfx
+sfax ./hello-termux-1.0.0-termux.sfx
 ```
 
 The installer checks that it is running inside Termux, extracts to a temporary directory, runs the optional `preinstall.sh`, the package `install.sh`, and then the optional `postinstall.sh`. Temporary files are removed on exit.
