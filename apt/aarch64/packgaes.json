@@ -1,1 +1,12 @@
+[
+  {
+    "name": "zgames-pkg",
+    "version": "1.0.0",
+    "architecture": "all",
+    "dependencies": [],
+    "description": "Installs zgames with the Termux package manager",
+    "url": "zgames-pkg-1.0.0-termux.sfx",
+    "sha256": "779efc4efc609f7e8a4f0b07d5216e014e5b6c2f760bf8ea666e34d7aefa2056"
+  }
+]
 
